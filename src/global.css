@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  background: #F7F2E8;
+}
+a {
+  color: #7A563C;
+}
+a:hover {
+  color: #5C3F2A;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #6E665B;
+}
