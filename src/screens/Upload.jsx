@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { c, f, pillPrimary, backLink } from '../theme.js';
 
 const fieldLabel = {
@@ -24,10 +25,16 @@ const textarea = {
   outline: 'none',
 };
 
-export default function Upload({ mode, onBack, onShare }) {
+export default function Upload() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const continueFrom = searchParams.get('continueFrom');
+  const isContinue = !!continueFrom;
   const [dragOver, setDragOver] = useState(false);
-  const isContinue = mode === 'continue';
   const stop = (e) => e.preventDefault();
+
+  const onBack = () => (isContinue ? navigate(`/artwork/${continueFrom}`) : navigate('/'));
+  const onShare = () => navigate('/');
 
   return (
     <div style={{ maxWidth: 620, margin: '0 auto', padding: '36px 44px 110px' }}>

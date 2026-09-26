@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { c, f, pillPrimary, backLink } from '../theme.js';
 import { TREE } from '../data.js';
 
@@ -24,7 +25,11 @@ function Node({ node, selectedId, onSelect, small }) {
   );
 }
 
-export default function Tree({ selectedId, onSelect, onBack, onContinue }) {
+export default function Tree() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [selectedId, setSelectedId] = useState('orig');
+
   const byId = { orig: TREE.root };
   TREE.children.forEach((n) => {
     byId[n.id] = n;
@@ -34,7 +39,7 @@ export default function Tree({ selectedId, onSelect, onBack, onContinue }) {
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '36px 44px 110px' }}>
-      <div onClick={onBack} style={{ ...backLink, marginBottom: 38 }}>← back to midnight drive</div>
+      <div onClick={() => navigate(`/artwork/${id}`)} style={{ ...backLink, marginBottom: 38 }}>← back to midnight drive</div>
 
       <div style={{ textAlign: 'center', marginBottom: 54 }}>
         <div style={{ fontSize: 30, fontWeight: 600, marginBottom: 6 }}>see where this idea went</div>
@@ -43,7 +48,7 @@ export default function Tree({ selectedId, onSelect, onBack, onContinue }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div
-          onClick={() => onSelect('orig')}
+          onClick={() => setSelectedId('orig')}
           style={{ ...box(selectedId === 'orig'), padding: '13px 24px', minWidth: 170, maxWidth: 'none' }}
         >
           <div style={{ fontSize: 14, fontWeight: 600 }}>{TREE.root.title}</div>
@@ -56,11 +61,11 @@ export default function Tree({ selectedId, onSelect, onBack, onContinue }) {
           {TREE.children.map((n) => (
             <div key={n.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div style={stem} />
-              <Node node={n} selectedId={selectedId} onSelect={onSelect} />
+              <Node node={n} selectedId={selectedId} onSelect={setSelectedId} />
               {n.child && (
                 <>
                   <div style={stem} />
-                  <Node node={n.child} selectedId={selectedId} onSelect={onSelect} small />
+                  <Node node={n.child} selectedId={selectedId} onSelect={setSelectedId} small />
                 </>
               )}
             </div>
@@ -74,7 +79,7 @@ export default function Tree({ selectedId, onSelect, onBack, onContinue }) {
         <div style={{ fontStyle: 'italic', fontSize: 14, lineHeight: 1.7, color: c.textSoft, marginBottom: 22 }}>
           "{selected.note}"
         </div>
-        <div onClick={onContinue} style={{ ...pillPrimary, padding: '11px 22px', fontSize: 10 }}>
+        <div onClick={() => navigate(`/create?continueFrom=${id}`)} style={{ ...pillPrimary, padding: '11px 22px', fontSize: 10 }}>
           CONTINUE THIS <span>→</span>
         </div>
       </div>

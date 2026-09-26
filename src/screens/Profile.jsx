@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { c, f } from '../theme.js';
 import { PROJECTS, CONTINUED } from '../data.js';
 import ProjectCard from '../components/ProjectCard.jsx';
@@ -14,16 +15,20 @@ const tab = (active) => ({
   border: `1px solid ${active ? c.accent : c.surface}`,
 });
 
-export default function Profile({ onSelectProject }) {
+export default function Profile() {
+  const { username } = useParams();
+  const navigate = useNavigate();
   const [active, setActive] = useState('started');
-  const cards = active === 'started' ? PROJECTS.filter((p) => p.creator === 'abby') : CONTINUED;
+  const cards = active === 'started'
+    ? PROJECTS.filter((p) => p.creator === username)
+    : CONTINUED.filter((p) => p.creator === username);
 
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: '56px 44px 110px' }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: 34 }}>
         {/* circle = artist, per the shape system */}
         <div style={{ width: 86, height: 86, borderRadius: '50%', background: c.surface, marginBottom: 18 }} />
-        <div style={{ fontSize: 30, fontWeight: 600 }}>abby</div>
+        <div style={{ fontSize: 30, fontWeight: 600 }}>{username}</div>
         <div style={{ fontSize: 13, color: c.muted, marginTop: 2 }}>collects unfinished songs</div>
         <div style={{ fontFamily: f.mono, fontSize: 10, letterSpacing: 1, color: c.muted, marginTop: 14 }}>
           12 ideas started · 8 ideas continued · 31 creations grew from their work
@@ -37,7 +42,7 @@ export default function Profile({ onSelectProject }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 30 }}>
         {cards.map((p) => (
-          <ProjectCard key={p.id} project={p} compact onClick={() => onSelectProject(p)} />
+          <ProjectCard key={p.id} project={p} compact onClick={() => navigate(`/artwork/${p.id}`)} />
         ))}
       </div>
     </div>

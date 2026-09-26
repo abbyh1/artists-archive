@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { c } from '../theme.js';
 import Logo from './Logo.jsx';
 
@@ -6,11 +7,14 @@ const item = (active) => ({
   fontSize: 14,
   cursor: 'pointer',
   paddingBottom: 3,
+  textDecoration: 'none',
   color: active ? c.accent : c.muted,
   borderBottom: active ? `1px solid ${c.accent}` : '1px solid transparent',
 });
 
-export default function Nav({ screen, onNavigate }) {
+export default function Nav() {
+  const { pathname } = useLocation();
+
   return (
     <div
       style={{
@@ -25,11 +29,13 @@ export default function Nav({ screen, onNavigate }) {
         borderBottom: `1px solid ${c.border}`,
       }}
     >
-      <Logo onClick={() => onNavigate('home')} />
+      <Link to="/" style={{ textDecoration: 'none' }}>
+        <Logo />
+      </Link>
       <div style={{ display: 'flex', gap: 34 }}>
-        <div onClick={() => onNavigate('home')} style={item(screen === 'home')}>explore</div>
-        <div onClick={() => onNavigate('upload')} style={item(screen === 'upload')}>upload</div>
-        <div onClick={() => onNavigate('profile')} style={item(screen === 'profile')}>profile</div>
+        <Link to="/" style={item(pathname === '/')}>explore</Link>
+        <Link to="/create" style={item(pathname === '/create')}>upload</Link>
+        <Link to="/profile/abby" style={item(pathname.startsWith('/profile'))}>profile</Link>
       </div>
     </div>
   );

@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { c } from '../theme.js';
-import { FILTER_TAGS } from '../data.js';
+import { FILTER_TAGS, PROJECTS } from '../data.js';
 import Chip from '../components/Chip.jsx';
 import ShapeKey from '../components/ShapeKey.jsx';
 import ProjectCard from '../components/ProjectCard.jsx';
 
-export default function Home({ projects, filter, onFilter, onSelectProject }) {
+export default function Home() {
+  const navigate = useNavigate();
+  const [filter, setFilter] = useState(null);
+  const projects = filter ? PROJECTS.filter((p) => p.tags.includes(filter)) : PROJECTS;
+
   return (
     <>
       <div style={{ padding: '64px 44px 30px', textAlign: 'center' }}>
@@ -17,9 +22,9 @@ export default function Home({ projects, filter, onFilter, onSelectProject }) {
       </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 10, padding: '0 44px 16px' }}>
-        <Chip label="all" active={!filter} onClick={() => onFilter(null)} />
+        <Chip label="all" active={!filter} onClick={() => setFilter(null)} />
         {FILTER_TAGS.map((t) => (
-          <Chip key={t} label={t} active={filter === t} onClick={() => onFilter(filter === t ? null : t)} />
+          <Chip key={t} label={t} active={filter === t} onClick={() => setFilter(filter === t ? null : t)} />
         ))}
       </div>
 
@@ -36,7 +41,7 @@ export default function Home({ projects, filter, onFilter, onSelectProject }) {
         }}
       >
         {projects.map((p) => (
-          <ProjectCard key={p.id} project={p} onClick={() => onSelectProject(p)} />
+          <ProjectCard key={p.id} project={p} onClick={() => navigate(`/artwork/${p.id}`)} />
         ))}
       </div>
     </>

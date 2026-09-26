@@ -1,5 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { c, f, MEDIUM_LABEL, shape, monoLabel, pillPrimary, backLink } from '../theme.js';
+import { PROJECTS, CONTINUED } from '../data.js';
+import NotFound from './NotFound.jsx';
+
+const ALL_PROJECTS = [...PROJECTS, ...CONTINUED];
 
 function Media({ project, sh }) {
   if (project.medium === 'music') {
@@ -48,12 +53,19 @@ function Media({ project, sh }) {
   );
 }
 
-export default function Project({ project, saved, onToggleSave, onBack, onContinue, onTree }) {
+export default function Project() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [saved, setSaved] = useState(false);
+  const project = ALL_PROJECTS.find((p) => p.id === id);
+
+  if (!project) return <NotFound />;
+
   const sh = shape(project.finished);
 
   return (
     <div style={{ maxWidth: 1020, margin: '0 auto', padding: '36px 44px 110px' }}>
-      <div onClick={onBack} style={backLink}>← archive</div>
+      <div onClick={() => navigate('/')} style={backLink}>← archive</div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 400px) minmax(0, 1fr)', gap: 60, alignItems: 'start' }}>
         <div>
@@ -73,7 +85,7 @@ export default function Project({ project, saved, onToggleSave, onBack, onContin
 
           <div style={{ display: 'flex', gap: 10, marginBottom: 38 }}>
             <div
-              onClick={onToggleSave}
+              onClick={() => setSaved((s) => !s)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -141,8 +153,8 @@ export default function Project({ project, saved, onToggleSave, onBack, onContin
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12 }}>
-            <div onClick={onContinue} style={pillPrimary}>CONTINUE THIS <span>→</span></div>
-            <div onClick={onTree} style={{ display: 'flex', alignItems: 'center', gap: 10, color: c.accent, fontSize: 13, cursor: 'pointer' }}>
+            <div onClick={() => navigate(`/create?continueFrom=${project.id}`)} style={pillPrimary}>CONTINUE THIS <span>→</span></div>
+            <div onClick={() => navigate(`/artwork/${project.id}/tree`)} style={{ display: 'flex', alignItems: 'center', gap: 10, color: c.accent, fontSize: 13, cursor: 'pointer' }}>
               {project.versions} version{project.versions === 1 ? '' : 's'} grew from this <span>→</span>
             </div>
           </div>
